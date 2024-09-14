@@ -1,2 +1,2 @@
-# com-baseplugin
-Nukkit template plugin
+# Nukkit Lifesteal plugin
+Plugin for Nukkit Server Software that adds a Lifesteal feature.
