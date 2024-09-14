@@ -103,15 +103,9 @@ public class EventListener implements Listener {
         double x = 0;
         double z = 0;
         if (direction.getAxis() == BlockFace.Axis.X) {
-            x = 1.5;
-            if (direction.getAxisDirection() == BlockFace.AxisDirection.NEGATIVE) {
-                x *= -1;
-            }
+            x = direction.getAxisDirection() == BlockFace.AxisDirection.NEGATIVE ? -1.5 : 1.5;
         } else if (direction.getAxis() == BlockFace.Axis.Z) {
-            z = 1.5;
-            if (direction.getAxisDirection() == BlockFace.AxisDirection.NEGATIVE) {
-                z *= -1;
-            }
+            z = direction.getAxisDirection() == BlockFace.AxisDirection.NEGATIVE ? -1.5 : 1.5;
         }
 
         for (int i = 0; i < 5; i++) {
