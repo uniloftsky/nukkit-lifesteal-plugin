@@ -1,6 +1,6 @@
-name: BasePlugin
-main: com.uniloftsky.nukkit.plugin.BasePlugin
+name: LifestealPlugin
+main: net.uniloftsky.nukkit.plugin.LifestealMain
 version: "${pom.version}"
-api: [ "1.0.0" ]
+api: [ "1.0.20" ]
 author: uniloftsky
-description: Layout plugin
+description: Lifesteal plugin
