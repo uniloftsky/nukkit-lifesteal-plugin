@@ -1,5 +1,5 @@
 name: LifestealPlugin
-main: net.uniloftsky.nukkit.plugin.LifestealMain
+main: net.uniloftsky.nukkit.lifesteal.LifestealMain
 version: "${pom.version}"
 api: [ "1.0.20" ]
 author: uniloftsky
