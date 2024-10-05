@@ -64,7 +64,7 @@ public final class LifestealCore {
             throw new IllegalArgumentException("Item in hand cannot be null!");
         }
 
-        if (target.isOnline() && target.isAlive()) /* if the player still online and alive */ {
+        if (target.isOnline() && target.isAlive() && target.hasPermission(Permissions.LIFESTEAL_ABILITY_PERMISSION.getPermission())) /* if the player still online, alive and has a permission */ {
             Optional<WeaponType> optionalWeapon = WeaponType.findWeaponById(itemInHand.getId());
             if (optionalWeapon.isPresent()) {
                 WeaponType weapon = optionalWeapon.get();

@@ -35,6 +35,7 @@ public class LifestealCoreTest {
         Player player = mock(Player.class);
         given(player.isOnline()).willReturn(true);
         given(player.isAlive()).willReturn(true);
+        given(player.hasPermission(Permissions.LIFESTEAL_ABILITY_PERMISSION.getPermission())).willReturn(true);
 
         int dealtDamage = 10;
         WeaponType weapon = WeaponType.DIAMOND_AXE; // 15% of lifesteal
@@ -77,6 +78,23 @@ public class LifestealCoreTest {
         Player player = mock(Player.class);
         given(player.isOnline()).willReturn(true);
         given(player.isAlive()).willReturn(false);
+
+        // when
+        boolean result = core.healPlayer(player, mock(Item.class));
+
+        // then
+        assertFalse(result);
+        then(player).should(times(0)).heal(any());
+    }
+
+    @Test
+    public void testHealPlayerNoPermission() {
+
+        // given
+        Player player = mock(Player.class);
+        given(player.isOnline()).willReturn(true);
+        given(player.isAlive()).willReturn(true);
+        given(player.hasPermission(Permissions.LIFESTEAL_ABILITY_PERMISSION.getPermission())).willReturn(false);
 
         // when
         boolean result = core.healPlayer(player, mock(Item.class));

@@ -4,3 +4,6 @@ version: "${pom.version}"
 api: [ "1.0.0" ]
 author: uniloftsky
 description: Lifesteal plugin
+permissions:
+  uniloftsky.nukkit.lifesteal:
+    default: op

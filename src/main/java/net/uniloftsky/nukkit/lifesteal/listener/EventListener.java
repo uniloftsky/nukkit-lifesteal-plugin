@@ -28,10 +28,7 @@ public class EventListener implements Listener {
             Player player = (Player) event.getDamager();
             Item itemInHand = player.getInventory().getItemInHand();
             try {
-                boolean isHealed = lifeSteal.healPlayer(player, itemInHand);
-                if (isHealed) {
-                    logger.info("Successfully healed the player: " + player);
-                }
+                lifeSteal.healPlayer(player, itemInHand);
             } catch (IllegalArgumentException ex) {
                 logger.error("Some exception occurred when tried to heal the player", ex);
             }
