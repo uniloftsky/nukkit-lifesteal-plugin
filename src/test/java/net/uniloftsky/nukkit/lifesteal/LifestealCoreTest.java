@@ -6,10 +6,15 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.particle.GenericParticle;
 import cn.nukkit.math.Vector3;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
@@ -19,8 +24,23 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class LifestealCoreTest {
 
+    private MockedStatic<ThreadLocalRandom> mockedThreadLocal;
+    private ThreadLocalRandom random;
+
     @Spy
     private LifestealCore core;
+
+    @BeforeEach
+    void beforeTest() {
+        random = mock(ThreadLocalRandom.class);
+        mockedThreadLocal = mockStatic(ThreadLocalRandom.class);
+        mockedThreadLocal.when(ThreadLocalRandom::current).thenReturn(random);
+    }
+
+    @AfterEach
+    void afterTest() {
+        mockedThreadLocal.close();
+    }
 
     @Test
     public void testGetInstance() {
@@ -42,6 +62,8 @@ public class LifestealCoreTest {
         Item itemInHand = mock(Item.class);
         given(itemInHand.getId()).willReturn(weapon.getItemId());
         given(itemInHand.getAttackDamage()).willReturn(dealtDamage);
+
+        given(random.nextInt(100)).willReturn(25);
 
         doNothing().when(core).spawnHealingParticles(player);
 
@@ -95,6 +117,25 @@ public class LifestealCoreTest {
         given(player.isOnline()).willReturn(true);
         given(player.isAlive()).willReturn(true);
         given(player.hasPermission(Permissions.LIFESTEAL_ABILITY_PERMISSION.getPermission())).willReturn(false);
+
+        // when
+        boolean result = core.healPlayer(player, mock(Item.class));
+
+        // then
+        assertFalse(result);
+        then(player).should(times(0)).heal(any());
+    }
+
+    @Test
+    public void testHealPlayerBadChance() {
+
+        // given
+        Player player = mock(Player.class);
+        given(player.isOnline()).willReturn(true);
+        given(player.isAlive()).willReturn(true);
+        given(player.hasPermission(Permissions.LIFESTEAL_ABILITY_PERMISSION.getPermission())).willReturn(true);
+
+        given(random.nextInt(100)).willReturn(50);
 
         // when
         boolean result = core.healPlayer(player, mock(Item.class));

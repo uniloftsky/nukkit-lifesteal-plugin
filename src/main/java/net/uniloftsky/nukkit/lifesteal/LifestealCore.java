@@ -20,9 +20,9 @@ public final class LifestealCore {
     private static final int PARTICLE_ID = Particle.TYPE_VILLAGER_HAPPY;
 
     /**
-     * Distance between player and spawned particle
+     * The chance of lifesteal occurrence. Should be defined in %
      */
-    private static final double PARTICLE_DISTANCE = 1.5;
+    private static final int LIFESTEAL_CHANCE = 25;
 
     /**
      * Amount of particles around the player
@@ -65,17 +65,20 @@ public final class LifestealCore {
         }
 
         if (target.isOnline() && target.isAlive() && target.hasPermission(Permissions.LIFESTEAL_ABILITY_PERMISSION.getPermission())) /* if the player still online, alive and has a permission */ {
-            Optional<WeaponType> optionalWeapon = WeaponType.findWeaponById(itemInHand.getId());
-            if (optionalWeapon.isPresent()) {
-                WeaponType weapon = optionalWeapon.get();
-                int dealtDamage = itemInHand.getAttackDamage();
-                if (dealtDamage > 0) /* if the dealt damage above zero, so we are not going to make needles calculations */ {
-                    float amountOfHeal = calculateHealAmount(dealtDamage, weapon.getLifesteal());
-                    target.heal(amountOfHeal);
+            int randomOfLifestealChance = ThreadLocalRandom.current().nextInt(100);
+            if (randomOfLifestealChance <= LIFESTEAL_CHANCE) {
+                Optional<WeaponType> optionalWeapon = WeaponType.findWeaponById(itemInHand.getId());
+                if (optionalWeapon.isPresent()) {
+                    WeaponType weapon = optionalWeapon.get();
+                    int dealtDamage = itemInHand.getAttackDamage();
+                    if (dealtDamage > 0) /* if the dealt damage above zero, so we are not going to make needles calculations */ {
+                        float amountOfHeal = calculateHealAmount(dealtDamage, weapon.getLifesteal());
+                        target.heal(amountOfHeal);
 
-                    // spawn healing particles
-                    spawnHealingParticles(target);
-                    return true;
+                        // spawn healing particles
+                        spawnHealingParticles(target);
+                        return true;
+                    }
                 }
             }
         }
