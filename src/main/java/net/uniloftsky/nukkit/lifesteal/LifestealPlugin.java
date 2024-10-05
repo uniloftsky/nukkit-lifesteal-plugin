@@ -6,11 +6,11 @@ import net.uniloftsky.nukkit.lifesteal.listener.EventListener;
 /**
  * Main plugin class
  */
-public class LifestealMain extends PluginBase {
+public class LifestealPlugin extends PluginBase {
 
-    private static LifestealMain INSTANCE;
+    private static LifestealPlugin INSTANCE;
 
-    public static LifestealMain getInstance() {
+    public static LifestealPlugin getInstance() {
         return INSTANCE;
     }
 
