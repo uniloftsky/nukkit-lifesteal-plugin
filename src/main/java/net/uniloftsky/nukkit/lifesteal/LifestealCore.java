@@ -2,11 +2,12 @@ package net.uniloftsky.nukkit.lifesteal;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.particle.GenericParticle;
 import cn.nukkit.level.particle.Particle;
-import cn.nukkit.math.BlockFace;
 
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Lifesteal core holds the logic regarding the lifesteal feature (incl. healing calculations, spawning particles etc.)
@@ -26,7 +27,7 @@ public final class LifestealCore {
     /**
      * Amount of particles around the player
      */
-    private static final double PARTICLES_AMOUNT = 5;
+    private static final double PARTICLES_AMOUNT = 20;
 
     /**
      * Heal multiplier. It is needed because a player has 10 hearts but 20 HP
@@ -82,27 +83,22 @@ public final class LifestealCore {
     }
 
     /**
-     * Spawn the healing particle near the player
+     * Spawn the healing particle near the attacked entity
      *
-     * @param target player near which particles will be spawned
+     * @param target entity that was attacked
      * @throws IllegalArgumentException if parameter target is null
      */
     void spawnHealingParticles(Player target) {
         if (target == null) {
-            throw new IllegalArgumentException("Player cannot be null");
-        }
-
-        double x = 0;
-        double z = 0;
-        BlockFace direction = target.getDirection();
-        if (direction.getAxis() == BlockFace.Axis.X) {
-            x = direction.getAxisDirection() == BlockFace.AxisDirection.NEGATIVE ? -PARTICLE_DISTANCE : PARTICLE_DISTANCE;
-        } else if (direction.getAxis() == BlockFace.Axis.Z) {
-            z = direction.getAxisDirection() == BlockFace.AxisDirection.NEGATIVE ? -PARTICLE_DISTANCE : PARTICLE_DISTANCE;
+            throw new IllegalArgumentException("Entity cannot be null");
         }
 
         for (int i = 0; i < PARTICLES_AMOUNT; i++) {
-            target.getLevel().addParticle(new GenericParticle(target.add(x, PARTICLE_DISTANCE, z), PARTICLE_ID));
+            double x = ThreadLocalRandom.current().nextDouble(-1.5, 1.5);
+            double z = ThreadLocalRandom.current().nextDouble(-1.5, 1.5);
+            double y = ThreadLocalRandom.current().nextDouble(1, 2);
+            Location locationToSpawnParticles = target.add(x, y, z);
+            target.getLevel().addParticle(new GenericParticle(locationToSpawnParticles, PARTICLE_ID));
         }
     }
 

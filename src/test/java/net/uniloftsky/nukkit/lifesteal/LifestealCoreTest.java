@@ -5,7 +5,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.particle.GenericParticle;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -125,14 +124,11 @@ public class LifestealCoreTest {
         given(player.add(anyDouble(), anyDouble(), anyDouble())).willReturn(new Location());
         given(player.getLevel()).willReturn(mock(Level.class));
 
-        BlockFace direction = BlockFace.NORTH;
-        given(player.getDirection()).willReturn(direction);
-
         // when
         core.spawnHealingParticles(player);
 
         // then
-        then(player.getLevel()).should(times(5)).addParticle(any(GenericParticle.class));
+        then(player.getLevel()).should(times(20)).addParticle(any(GenericParticle.class)) /* 20 is amount of particles */;
     }
 
     @Test
@@ -144,14 +140,11 @@ public class LifestealCoreTest {
         given(player.add(anyDouble(), anyDouble(), anyDouble())).willReturn(new Location());
         given(player.getLevel()).willReturn(mock(Level.class));
 
-        BlockFace direction = BlockFace.WEST;
-        given(player.getDirection()).willReturn(direction);
-
         // when
         core.spawnHealingParticles(player);
 
         // then
-        then(player.getLevel()).should(times(5)).addParticle(any(GenericParticle.class));
+        then(player.getLevel()).should(times(20)).addParticle(any(GenericParticle.class)) /* 20 is amount of particles */;
     }
 
     @Test
