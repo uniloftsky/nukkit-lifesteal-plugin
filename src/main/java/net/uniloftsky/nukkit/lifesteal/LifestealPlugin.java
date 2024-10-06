@@ -1,6 +1,7 @@
 package net.uniloftsky.nukkit.lifesteal;
 
 import cn.nukkit.plugin.PluginBase;
+import net.uniloftsky.nukkit.lifesteal.config.LifestealConfig;
 import net.uniloftsky.nukkit.lifesteal.listener.EventListener;
 
 /**
@@ -14,12 +15,17 @@ public class LifestealPlugin extends PluginBase {
         return INSTANCE;
     }
 
+    private LifestealConfig config;
+
     /**
      * Invoked on plugin enabling, when server starts
      */
     @Override
     public void onEnable() {
         INSTANCE = this;
+
+        this.config = new LifestealConfig(this);
+        this.getLogger().info("Lifesteal chance: " + config.getLifestealChance());
 
         this.getServer().getPluginManager().registerEvents(new EventListener(), this);
         this.getLogger().info("Lifesteal plugin enabled!");
