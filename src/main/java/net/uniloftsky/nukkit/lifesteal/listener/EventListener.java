@@ -14,8 +14,8 @@ import net.uniloftsky.nukkit.lifesteal.LifestealPlugin;
  */
 public class EventListener implements Listener {
 
-    private final PluginLogger logger;
-    private final LifestealCore lifeSteal;
+    private PluginLogger logger;
+    private LifestealCore lifeSteal;
 
     public EventListener() {
         this.logger = LifestealPlugin.getInstance().getLogger();
