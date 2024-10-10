@@ -7,7 +7,6 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.plugin.PluginLogger;
 import net.uniloftsky.nukkit.lifesteal.LifestealCore;
-import net.uniloftsky.nukkit.lifesteal.LifestealPlugin;
 
 /**
  * Listener for in-game events
@@ -17,9 +16,9 @@ public class EventListener implements Listener {
     private PluginLogger logger;
     private LifestealCore lifeSteal;
 
-    public EventListener() {
-        this.logger = LifestealPlugin.getInstance().getLogger();
-        this.lifeSteal = LifestealCore.getInstance();
+    public EventListener(PluginLogger logger, LifestealCore lifeSteal) {
+        this.logger = logger;
+        this.lifeSteal = lifeSteal;
     }
 
     @EventHandler

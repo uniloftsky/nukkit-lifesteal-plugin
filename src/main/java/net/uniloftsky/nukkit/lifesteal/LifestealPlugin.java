@@ -15,6 +15,8 @@ public class LifestealPlugin extends PluginBase {
         return INSTANCE;
     }
 
+    private LifestealCore lifestealCore;
+
     private LifestealConfig config;
 
     /**
@@ -24,8 +26,10 @@ public class LifestealPlugin extends PluginBase {
     public void onEnable() {
         INSTANCE = this;
 
+        this.lifestealCore = LifestealCore.getInstance();
         this.config = new LifestealConfig(this);
-        this.getServer().getPluginManager().registerEvents(new EventListener(), this);
+        
+        this.getServer().getPluginManager().registerEvents(new EventListener(this.getLogger(), lifestealCore), this);
         this.getLogger().info("Lifesteal plugin enabled!");
     }
 

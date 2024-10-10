@@ -74,7 +74,7 @@ public class LifestealConfig {
 
         String mainConfigContents = ""; // will be always present
         try {
-            mainConfigContents = getConfigContents(MAIN_CONFIG);
+            mainConfigContents = getConfigContentsAsJson(MAIN_CONFIG);
         } catch (IOException ex) {
             plugin.getLogger().error("Cannot get main " + MAIN_CONFIG + " file");
         }
@@ -100,7 +100,7 @@ public class LifestealConfig {
         return new HashSet<>(weapons);
     }
 
-    private String getConfigContents(String configName) throws IOException {
+    private String getConfigContentsAsJson(String configName) throws IOException {
         Path configPath = pluginDataFolder.toPath().resolve(configName);
         return new String(Files.readAllBytes(configPath));
     }
@@ -115,7 +115,6 @@ public class LifestealConfig {
                 this.weapons.add(weapon);
                 plugin.getLogger().info("Registered weapon: " + weapon);
             }
-
         }
     }
 
