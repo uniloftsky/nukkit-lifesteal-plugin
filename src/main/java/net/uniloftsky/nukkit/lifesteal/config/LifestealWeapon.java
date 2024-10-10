@@ -2,15 +2,28 @@ package net.uniloftsky.nukkit.lifesteal.config;
 
 import java.util.Objects;
 
+/**
+ * Registered weapon that supports lifesteal feature
+ */
 public class LifestealWeapon {
 
+    /**
+     * ID of weapon (Minecraft item ID)
+     */
     private final int id;
-    private final String name;
+
+    /**
+     * Percentage of lifesteal
+     */
     private final int lifesteal;
 
-    public LifestealWeapon(int id, String name, int lifesteal) {
+    /**
+     * Weapon name
+     */
+    private String name;
+
+    public LifestealWeapon(int id, int lifesteal) {
         this.id = id;
-        this.name = name;
         this.lifesteal = lifesteal;
     }
 
@@ -20,6 +33,10 @@ public class LifestealWeapon {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getLifesteal() {
@@ -41,10 +58,10 @@ public class LifestealWeapon {
 
     @Override
     public String toString() {
-        return "[" +
+        return "{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", lifesteal=" + lifesteal +
-                ']';
+                '}';
     }
 }
