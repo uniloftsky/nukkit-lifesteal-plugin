@@ -20,7 +20,15 @@ import java.util.Set;
  */
 public class LifestealConfig {
 
+    /**
+     * Name of main config
+     */
     private static final String MAIN_CONFIG = "config.json";
+
+    /**
+     * Default name of the unknown and non-existing item
+     */
+    private static final String UNKNOWN_ITEM = "unknown";
 
     /**
      * Plugin instance
@@ -56,20 +64,19 @@ public class LifestealConfig {
     }
 
     private void init() {
-        plugin.getLogger().info("Started: Initializing LifestealConfig");
+        plugin.getLogger().info("Loading configuration...");
         processMainConfig();
-        plugin.getLogger().info("Finished: Initializing LifestealConfig. Registered weapons: " + weapons);
     }
 
     private void processMainConfig() {
-        plugin.getLogger().info("Processing " + MAIN_CONFIG);
+        plugin.getLogger().info("Loading " + MAIN_CONFIG);
         plugin.saveResource(MAIN_CONFIG);
 
         String mainConfigContents = ""; // will be always present
         try {
             mainConfigContents = getConfigContents(MAIN_CONFIG);
         } catch (IOException ex) {
-            plugin.getLogger().error("Cannot get main config.json file. Continuing with default config");
+            plugin.getLogger().error("Cannot get main " + MAIN_CONFIG + " file");
         }
 
         JsonObject configObject = JsonParser.parseString(mainConfigContents).getAsJsonObject();
@@ -101,11 +108,19 @@ public class LifestealConfig {
     private void registerWeapon(LifestealWeapon weapon) {
         if (weapon.getId() > 0) {
             Item minecraftItem = Item.get(weapon.getId());
-            weapon.setName(minecraftItem.getName());
+            if (!isWeaponValid(minecraftItem)) /* if weapon is not valid */ {
+                plugin.getLogger().warning("Cannot register a weapon with ID " + weapon.getId() + ". It either doesn't exist or is not a weapon");
+            } else /* if weapon is valid, proceed to retrieve its name and register it */ {
+                weapon.setName(minecraftItem.getName());
+                this.weapons.add(weapon);
+                plugin.getLogger().info("Registered weapon: " + weapon);
+            }
 
-            this.weapons.add(weapon);
-            plugin.getLogger().info("Registered weapon: " + weapon);
         }
+    }
+
+    private boolean isWeaponValid(Item item) {
+        return !item.isNull() && !item.getName().equalsIgnoreCase(UNKNOWN_ITEM) && (item.isAxe() || item.isSword());
     }
 
     private static class MainConfigFields {

@@ -25,8 +25,6 @@ public class LifestealPlugin extends PluginBase {
         INSTANCE = this;
 
         this.config = new LifestealConfig(this);
-        this.getLogger().info("Lifesteal chance: " + config.getLifestealChance());
-
         this.getServer().getPluginManager().registerEvents(new EventListener(), this);
         this.getLogger().info("Lifesteal plugin enabled!");
     }
