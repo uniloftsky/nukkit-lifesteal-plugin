@@ -5,6 +5,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.particle.GenericParticle;
 import cn.nukkit.level.particle.Particle;
+import net.uniloftsky.nukkit.lifesteal.config.LifestealConfig;
+import net.uniloftsky.nukkit.lifesteal.config.LifestealWeapon;
 
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -20,11 +22,6 @@ public final class LifestealCore {
     private static final int PARTICLE_ID = Particle.TYPE_VILLAGER_HAPPY;
 
     /**
-     * The chance of lifesteal occurrence. Should be defined in %
-     */
-    private static final int LIFESTEAL_CHANCE = 25;
-
-    /**
      * Amount of particles around the player
      */
     private static final double PARTICLES_AMOUNT = 20;
@@ -34,18 +31,14 @@ public final class LifestealCore {
      */
     private static final int HEAL_MULTIPLIER = 2;
 
-    private static LifestealCore INSTANCE;
-
-    // Singleton static factory method
-    public static LifestealCore getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new LifestealCore();
-        }
-        return INSTANCE;
-    }
+    /**
+     * Config instance
+     */
+    private LifestealConfig config;
 
     // Private constructor
-    private LifestealCore() {
+    public LifestealCore(LifestealConfig config) {
+        this.config = config;
     }
 
     /**
@@ -66,10 +59,11 @@ public final class LifestealCore {
 
         if (target.isOnline() && target.isAlive() && target.hasPermission(Permissions.LIFESTEAL_ABILITY_PERMISSION.getPermission())) /* if the player still online, alive and has a permission */ {
             int randomOfLifestealChance = ThreadLocalRandom.current().nextInt(100);
-            if (randomOfLifestealChance <= LIFESTEAL_CHANCE) {
-                Optional<WeaponType> optionalWeapon = WeaponType.findWeaponById(itemInHand.getId());
+            int lifestealChance = config.getLifestealChance();
+            if (randomOfLifestealChance <= lifestealChance) {
+                Optional<LifestealWeapon> optionalWeapon = config.getWeapon(itemInHand.getId());
                 if (optionalWeapon.isPresent()) {
-                    WeaponType weapon = optionalWeapon.get();
+                    LifestealWeapon weapon = optionalWeapon.get();
                     int dealtDamage = itemInHand.getAttackDamage();
                     if (dealtDamage > 0) /* if the dealt damage above zero, so we are not going to make needles calculations */ {
                         float amountOfHeal = calculateHealAmount(dealtDamage, weapon.getLifesteal());

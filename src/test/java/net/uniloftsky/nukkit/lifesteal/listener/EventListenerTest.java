@@ -32,7 +32,7 @@ public class EventListenerTest {
     private static PluginLogger logger;
 
     @InjectMocks
-    private EventListener listener = new EventListener();
+    private EventListener listener = new EventListener(logger, core);
 
     @BeforeAll
     static void beforeAll() {
