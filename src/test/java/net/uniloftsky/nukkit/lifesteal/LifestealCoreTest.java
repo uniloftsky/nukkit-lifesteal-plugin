@@ -6,14 +6,19 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.particle.GenericParticle;
 import cn.nukkit.math.Vector3;
+import net.uniloftsky.nukkit.lifesteal.config.LifestealConfig;
+import net.uniloftsky.nukkit.lifesteal.config.LifestealWeapon;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,11 +29,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class LifestealCoreTest {
 
+    private final static int LIFESTEAL_CHANCE = 25;
     private MockedStatic<ThreadLocalRandom> mockedThreadLocal;
     private ThreadLocalRandom random;
 
+    @Mock
+    private LifestealConfig config;
+
     @Spy
-    private LifestealCore core;
+    @InjectMocks
+    private LifestealCore core = new LifestealCore(config);
 
     @BeforeEach
     void beforeTest() {
@@ -43,12 +53,6 @@ public class LifestealCoreTest {
     }
 
     @Test
-    public void testGetInstance() {
-        LifestealCore core = LifestealCore.getInstance();
-        assertNotNull(core);
-    }
-
-    @Test
     public void testHealPlayer() {
 
         // given
@@ -58,12 +62,16 @@ public class LifestealCoreTest {
         given(player.hasPermission(Permissions.LIFESTEAL_ABILITY_PERMISSION.getPermission())).willReturn(true);
 
         int dealtDamage = 10;
-        WeaponType weapon = WeaponType.DIAMOND_AXE; // 15% of lifesteal
+        int mockedId = 666;
         Item itemInHand = mock(Item.class);
-        given(itemInHand.getId()).willReturn(weapon.getItemId());
+        given(itemInHand.getId()).willReturn(mockedId);
         given(itemInHand.getAttackDamage()).willReturn(dealtDamage);
 
-        given(random.nextInt(100)).willReturn(25);
+        given(config.getLifestealChance()).willReturn(LIFESTEAL_CHANCE);
+        given(random.nextInt(100)).willReturn(LIFESTEAL_CHANCE);
+
+        LifestealWeapon weapon = new LifestealWeapon(mockedId, 10);
+        given(config.getWeapon(mockedId)).willReturn(Optional.of(weapon));
 
         doNothing().when(core).spawnHealingParticles(player);
 
@@ -135,7 +143,8 @@ public class LifestealCoreTest {
         given(player.isAlive()).willReturn(true);
         given(player.hasPermission(Permissions.LIFESTEAL_ABILITY_PERMISSION.getPermission())).willReturn(true);
 
-        given(random.nextInt(100)).willReturn(50);
+        given(config.getLifestealChance()).willReturn(LIFESTEAL_CHANCE);
+        given(random.nextInt(100)).willReturn(50); // 50%, so no lifesteal
 
         // when
         boolean result = core.healPlayer(player, mock(Item.class));

@@ -11,14 +11,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Class to hold configurable data. It holds information about lifesteal chance, registered weapons and its lifesteal potential
  */
-public class LifestealConfig {
+public final class LifestealConfig {
 
     /**
      * Name of main config
@@ -33,7 +34,7 @@ public class LifestealConfig {
     /**
      * Plugin instance
      */
-    private final LifestealPlugin plugin;
+    private LifestealPlugin plugin;
 
     /**
      * Gson instance to parse JSON configs
@@ -43,40 +44,50 @@ public class LifestealConfig {
     /**
      * Plugin data folder
      */
-    private final File pluginDataFolder;
+    private File pluginDataFolder;
 
     /**
-     * Storage with registered weapons
+     * Storage with registered weapons. Key - id, value - weapon
      */
-    private final Set<LifestealWeapon> weapons = new HashSet<>();
+    private Map<Integer, LifestealWeapon> weapons = new HashMap<>();
 
     /**
      * Chance of lifesteal. Read from config
      */
     private int lifestealChance;
 
+    /**
+     * Flag to define if config is initialized. After successful initialization the value changes to true
+     */
+    private boolean configInitialized = false;
+
     public LifestealConfig(LifestealPlugin plugin) {
         this.plugin = plugin;
         this.gson = new Gson();
         this.pluginDataFolder = plugin.getDataFolder();
-
-        init();
     }
 
-    private void init() {
+    /**
+     * Initialization method. Must be invoked after instantiation before calling any further method
+     *
+     * @return true if initialization was successful, false if wasn't
+     */
+    public boolean init() {
         plugin.getLogger().info("Loading configuration...");
-        processMainConfig();
+        configInitialized = processMainConfig();
+        return configInitialized;
     }
 
-    private void processMainConfig() {
+    boolean processMainConfig() {
         plugin.getLogger().info("Loading " + MAIN_CONFIG);
         plugin.saveResource(MAIN_CONFIG);
 
-        String mainConfigContents = ""; // will be always present
+        String mainConfigContents;
         try {
-            mainConfigContents = getConfigContentsAsJson(MAIN_CONFIG);
+            mainConfigContents = getConfigContents(MAIN_CONFIG);
         } catch (IOException ex) {
-            plugin.getLogger().error("Cannot get main " + MAIN_CONFIG + " file");
+            plugin.getLogger().error("Cannot get " + MAIN_CONFIG + " file");
+            return false;
         }
 
         JsonObject configObject = JsonParser.parseString(mainConfigContents).getAsJsonObject();
@@ -90,39 +101,59 @@ public class LifestealConfig {
             LifestealWeapon weapon = gson.fromJson(jsonWeapon, LifestealWeapon.class);
             registerWeapon(weapon);
         }
+        return true;
     }
 
     public int getLifestealChance() {
+        isInitialized();
         return lifestealChance;
     }
 
-    public Set<LifestealWeapon> getWeapons() {
-        return new HashSet<>(weapons);
+    public Map<Integer, LifestealWeapon> getWeapons() {
+        isInitialized();
+        return new HashMap<>(weapons);
     }
 
-    private String getConfigContentsAsJson(String configName) throws IOException {
+    public Optional<LifestealWeapon> getWeapon(int id) {
+        isInitialized();
+        return Optional.ofNullable(weapons.get(id));
+    }
+
+    String getConfigContents(String configName) throws IOException {
         Path configPath = pluginDataFolder.toPath().resolve(configName);
         return new String(Files.readAllBytes(configPath));
     }
 
-    private void registerWeapon(LifestealWeapon weapon) {
+    void registerWeapon(LifestealWeapon weapon) {
         if (weapon.getId() > 0) {
             Item minecraftItem = Item.get(weapon.getId());
-            if (!isWeaponValid(minecraftItem)) /* if weapon is not valid */ {
+            if (!isWeaponItemValid(minecraftItem)) /* if weapon is not valid */ {
                 plugin.getLogger().warning("Cannot register a weapon with ID " + weapon.getId() + ". It either doesn't exist or is not a weapon");
             } else /* if weapon is valid, proceed to retrieve its name and register it */ {
                 weapon.setName(minecraftItem.getName());
-                this.weapons.add(weapon);
+                this.weapons.put(minecraftItem.getId(), weapon);
                 plugin.getLogger().info("Registered weapon: " + weapon);
             }
         }
     }
 
-    private boolean isWeaponValid(Item item) {
+    /**
+     * Check if the imported from config weapon is a valid minecraft weapon item
+     *
+     * @param item item to check
+     * @return true if valid, false if not
+     */
+    boolean isWeaponItemValid(Item item) {
         return !item.isNull() && !item.getName().equalsIgnoreCase(UNKNOWN_ITEM) && (item.isAxe() || item.isSword());
     }
 
-    private static class MainConfigFields {
+    void isInitialized() {
+        if (!configInitialized) {
+            throw new RuntimeException("Config wasn't initialized properly");
+        }
+    }
+
+    static class MainConfigFields {
         static final String LIFESTEAL_CHANCE_FIELD = "chance";
         static final String WEAPONS_LIST_FIELD = "weapons";
     }

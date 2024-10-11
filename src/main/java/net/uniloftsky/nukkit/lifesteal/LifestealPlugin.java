@@ -26,9 +26,16 @@ public class LifestealPlugin extends PluginBase {
     public void onEnable() {
         INSTANCE = this;
 
-        this.lifestealCore = LifestealCore.getInstance();
         this.config = new LifestealConfig(this);
-        
+        boolean initialized = this.config.init();
+
+        if (!initialized) {
+            this.getLogger().error("Configuration cannot be initialized. Plugin will be disabled");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        this.lifestealCore = new LifestealCore(config);
         this.getServer().getPluginManager().registerEvents(new EventListener(this.getLogger(), lifestealCore), this);
         this.getLogger().info("Lifesteal plugin enabled!");
     }
