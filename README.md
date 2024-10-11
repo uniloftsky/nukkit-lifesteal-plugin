@@ -2,6 +2,9 @@
 
 Plugin for Nukkit that adds a Lifesteal feature.
 
+# Demo
+![Demo GIF](./demo.gif)
+
 # Configuration
 
 This plugin can be configured via the `config.json` file. It contains the following:
