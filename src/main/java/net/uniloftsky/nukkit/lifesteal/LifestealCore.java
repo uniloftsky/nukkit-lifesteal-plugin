@@ -36,7 +36,6 @@ public final class LifestealCore {
      */
     private LifestealConfig config;
 
-    // Private constructor
     public LifestealCore(LifestealConfig config) {
         this.config = config;
     }
