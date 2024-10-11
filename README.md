@@ -21,9 +21,9 @@ This plugin can be configured via the `config.json` file. It contains the follow
 }
 ```
 
-Where "chance" defines the probability of lifesteal occurrence.<br>
-The list of "weapons" includes the items for which the lifesteal feature is enabled. Each weapon object consists an "
-id" (the corresponding item ID) and "lifesteal", which specifies the lifesteal potential of the weapon.
+Where `chance` defines the probability of lifesteal occurrence.<br>
+The list of `weapons` includes the items for which the lifesteal feature is enabled. Each weapon object consists an 
+`id` (the corresponding item ID) and `lifesteal`, which specifies the lifesteal potential of the weapon.
 
 # Permissions
 
