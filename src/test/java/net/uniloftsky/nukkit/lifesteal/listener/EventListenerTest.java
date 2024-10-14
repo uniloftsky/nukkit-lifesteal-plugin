@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
@@ -37,8 +36,6 @@ public class EventListenerTest {
     @BeforeAll
     static void beforeAll() {
         LifestealPlugin mockedPlugin = mock(LifestealPlugin.class);
-        MockedStatic<LifestealPlugin> mockedStatic = mockStatic(LifestealPlugin.class);
-        mockedStatic.when(LifestealPlugin::getInstance).thenReturn(mockedPlugin);
         given(mockedPlugin.getLogger()).willReturn(logger);
     }
 

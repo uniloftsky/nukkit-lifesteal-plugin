@@ -9,12 +9,6 @@ import net.uniloftsky.nukkit.lifesteal.listener.EventListener;
  */
 public class LifestealPlugin extends PluginBase {
 
-    private static LifestealPlugin INSTANCE;
-
-    public static LifestealPlugin getInstance() {
-        return INSTANCE;
-    }
-
     private LifestealCore lifestealCore;
 
     private LifestealConfig config;
@@ -24,8 +18,6 @@ public class LifestealPlugin extends PluginBase {
      */
     @Override
     public void onEnable() {
-        INSTANCE = this;
-
         this.config = new LifestealConfig(this);
         boolean initialized = this.config.init();
 
